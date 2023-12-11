@@ -30,9 +30,18 @@ _git_changes() {
     git diff
 }
 
+# Since we are running in a docker container we don't own the git repo,
+# git will fail without this workaround.
+git config --global --add safe.directory $(pwd)
+
+echo "Python version: $(python --version)"
+echo "Autopep8 version: $(autopep8 --version)"
+
 # PROGRAM
 echo "Running autopep8..."
+set -x
 autopep8 $INPUT_CHECKPATH $INPUT_OPTIONS || echo "Problem running autopep8!"
+set +x
 
 if $INPUT_NO_COMMIT; then
   exit 0
